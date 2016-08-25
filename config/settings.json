@@ -3,6 +3,6 @@
     "salt": "SECRET",
     "mongoose": {
         "server": "mongodb://localhost/",
-        "db": "itmh_nodejs_api"
+        "db": "planner_app"
     }
 }

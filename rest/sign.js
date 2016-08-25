@@ -20,7 +20,10 @@ router.post('/up', (req, res) => {
 
         let session = {
             ip: req.ip,
-            token: crypto.lib.WordArray.random(256 / 8).toString()
+            token: crypto.lib.WordArray.random(256 / 8).toString(),
+            os:req.useragent.os,
+            browser:req.useragent.browser,
+            device:req.useragent.isMobile ? 'Mobile' : 'PC'
         };
 
         user.sessions.push(session);
@@ -43,7 +46,7 @@ router.post('/in', (req, res) => {
     }).exec((err, user) => {
         if (err) return res.sendStatus(500);
         if (!user) return res.sendStatus(404);
-        user.auth(req.body.password, req.ip, (err, session) => {
+        user.auth(req.body.password, req.ip, req.useragent, (err, session) => {
             if (err && err.status) return res.sendStatus(err.status);
             if (err) return res.sendStatus(500);
 

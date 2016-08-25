@@ -8,6 +8,7 @@ var config = require('../config');
 var schema = new mongoose.Schema({
     created: Date,
     updated: Date,
+    name: String,
     email: {
         type: String,
         required: true,
@@ -20,7 +21,10 @@ var schema = new mongoose.Schema({
     },
     sessions: [new mongoose.Schema({
         ip: String,
-        token: String
+        token: String,
+        device: String,
+        os: String,
+        browser: String
     })]
 });
 
@@ -36,14 +40,18 @@ schema.pre('save', function(next) {
     next();
 });
 
-schema.methods.auth = function(password, ip, callback) {
+schema.methods.auth = function(password, ip, useragent, callback) {
     var self = this;
 
     async.waterfall([
         function(callback) {
 
             var session = self.sessions.filter(function(session) {
-                return session.ip === ip;
+                var device = useragent.isMobile ? 'Mobile' : 'PC';
+                if (session.browser === useragent.browser
+                    && session.os === useragent.os
+                    && session.device === useragent.device) return true;
+                return false;
             }).pop();
 
             if (!!session) self.sessions.id(session._id).remove();
@@ -54,7 +62,10 @@ schema.methods.auth = function(password, ip, callback) {
 
                 var session = {
                     ip: ip,
-                    token: crypto.lib.WordArray.random(256 / 8).toString()
+                    token: crypto.lib.WordArray.random(256 / 8).toString(),
+                    os:useragent.os,
+                    browser:useragent.browser,
+                    device:useragent.isMobile ? 'Mobile' : 'PC',
                 };
 
                 self.sessions.unshift(session);
