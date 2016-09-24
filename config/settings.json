@@ -1,8 +1,8 @@
 {
-    "port": 3000,
+    "port": 3001,
     "salt": "SECRET",
     "mongoose": {
         "server": "mongodb://localhost/",
-        "db": "planner_app"
+        "db": "planner_database"
     }
 }

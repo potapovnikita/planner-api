@@ -9,6 +9,7 @@ var schema = new mongoose.Schema({
     created: Date,
     updated: Date,
     name: String,
+    birthday: String,
     email: {
         type: String,
         required: true,
@@ -25,7 +26,19 @@ var schema = new mongoose.Schema({
         device: String,
         os: String,
         browser: String
-    })]
+    })],
+    todo: [new mongoose.Schema({ 
+        time: Date,
+        title: String,
+        status: {
+            type: Boolean,
+            default: false
+        }
+    })],
+    avatar: {
+        type: String,
+        default: '/user/avatar/grey-profile.png'
+    }
 });
 
 schema.virtual('password').set(function(value) {
